@@ -7,8 +7,8 @@
 <!-- AUTO-GENERATED-LINKS-START -->
 <!-- このセクションはGitHub Actionsによって自動更新されます -->
 
--   [2025/6/20](https://omksds.github.io/sandbox/2025620_minutes/)
--   [2025621_githubpages](https://omksds.github.io/sandbox/2025621_githubpages/)
+- [2025/6/20](https://omksds.github.io/sandbox/2025620_minutes/)
+- [2025/6/21](https://omksds.github.io/sandbox/2025621_githubpages/)
 
 <!-- AUTO-GENERATED-LINKS-END -->
 
