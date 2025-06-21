@@ -33,18 +33,7 @@ jobs:
                   for dir in $DIRS_WITH_INDEX; do
                     if [ "$dir" != "." ]; then
                       DIR_NAME=$(basename "$dir")
-                      if [[ $DIR_NAME =~ ^[0-9]{7} ]]; then
-                        YEAR=${DIR_NAME:0:4}
-                        MONTH=${DIR_NAME:4:1}
-                        DAY=${DIR_NAME:5:2}
-                        MONTH=$((10#$MONTH))
-                        DAY=$((10#$DAY))
-                        DISPLAY_NAME="$YEAR/$MONTH/$DAY"
-                      else
-                        DISPLAY_NAME="$DIR_NAME"
-                      fi
-                      
-                      LINKS_SECTION="$LINKS_SECTION- [$DISPLAY_NAME]($BASE_URL/$dir/)"$'\n'
+                      LINKS_SECTION="$LINKS_SECTION- [$DIR_NAME]($BASE_URL/$dir/)"$'\n'
                     fi
                   done
 
