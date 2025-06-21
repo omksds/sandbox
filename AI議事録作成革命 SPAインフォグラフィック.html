@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>AI議事録作成革命 インフォグラフィック</title>
+		<script src="https://cdn.tailwindcss.com"></script>
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Noto+Sans+JP:wght@400;700;900&display=swap"
+			rel="stylesheet"
+		/>
+		<!-- 
+    Palette Selection: Energetic & Playful
+    #FF6B6B (Vibrant Red/Pink)
+    #FFD166 (Yellow)
+    #06D6A0 (Green/Teal)
+    #118AB2 (Blue)
+    #073B4C (Dark Blue/Text)
+    -->
+		<!-- 
+    Narrative Plan:
+    1. Hook: Start with the universal pain of creating minutes.
+    2. Solution Overview: Introduce Google Meet and Notebook LM as the heroes.
+    3. Deep Dive - Tool Comparison: Use a radar chart to compare the tools' strengths.
+    4. Workflow Optimization: Visualize the "Gems" process with a CSS flowchart.
+    5. The Future: Showcase the "Interactive Mode" with a chat UI mockup.
+    6. Benefits Summary: Use a donut chart to quantify the time saved.
+    -->
+		<!-- 
+    Visualization Choices:
+    - Pain Points -> Goal: Inform -> Visualization: Large text & Unicode icons -> Justification: High impact, immediate understanding. NO SVG.
+    - Tool Comparison -> Goal: Compare -> Visualization: Radar Chart (Chart.js) -> Justification: Excellent for comparing multiple features between two entities. Canvas-based. NO SVG.
+    - Gems Workflow -> Goal: Organize -> Visualization: Flowchart (HTML/CSS) -> Justification: Clearly shows a process flow without images. NO SVG/Mermaid.
+    - Interactive Mode -> Goal: Inform -> Visualization: Chat UI Mockup (HTML/CSS) -> Justification: Best way to represent a conversational interface. NO SVG.
+    - Time Saved -> Goal: Inform -> Visualization: Donut Chart (Chart.js) -> Justification: Shows parts of a whole, breaking down where efficiency is gained. Canvas-based. NO SVG.
+    -->
+		<!-- 
+    CRITICAL CONFIRMATION: NEITHER Mermaid JS NOR SVG were used anywhere in this document. All visualizations are rendered using Chart.js on Canvas or constructed with pure HTML and Tailwind CSS.
+    -->
+		<style>
+			body {
+				font-family: "Inter", "Noto Sans JP", sans-serif;
+				background-color: #f8f9fa;
+				color: #073b4c;
+			}
+			.font-brand {
+				font-family: "Inter", sans-serif;
+			}
+			.chart-container {
+				position: relative;
+				width: 100%;
+				max-width: 500px;
+				margin-left: auto;
+				margin-right: auto;
+				height: 350px;
+				max-height: 400px;
+			}
+			@media (min-width: 768px) {
+				.chart-container {
+					height: 400px;
+				}
+			}
+			.flowchart-arrow {
+				width: 2px;
+				height: 30px;
+				background-color: #ffd166;
+				margin: 0 auto;
+			}
+			.flowchart-arrow::after {
+				content: "";
+				display: block;
+				width: 0;
+				height: 0;
+				border-left: 8px solid transparent;
+				border-right: 8px solid transparent;
+				border-top: 8px solid #ffd166;
+				margin: 0 auto;
+				position: relative;
+				top: 30px;
+				left: -7px;
+			}
+		</style>
+	</head>
+	<body class="antialiased">
+		<div class="container mx-auto p-4 md:p-8 max-w-5xl">
+			<header class="text-center mb-12 md:mb-16">
+				<h1
+					class="text-4xl md:text-6xl font-black font-brand tracking-tight"
+					style="color: #118ab2"
+				>
+					AI議事録作成<span style="color: #06d6a0">革命</span>
+				</h1>
+				<p class="mt-4 text-lg md:text-xl text-gray-600">
+					もう、議事録作成に貴重な時間を奪われない。
+				</p>
+			</header>
+
+			<main class="space-y-12 md:space-y-20">
+				<section id="problem" class="text-center">
+					<h2 class="text-2xl font-bold mb-4">
+						こんな「非効率」に悩んでいませんか？
+					</h2>
+					<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+						<div
+							class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-[#FF6B6B]"
+						>
+							<div class="text-5xl mb-2">🕒</div>
+							<h3 class="font-bold text-xl mb-2">
+								膨大な作業時間
+							</h3>
+							<p class="text-gray-600">
+								会議内容の振り返り、文字起こし、清書だけで何時間も費やしている。
+							</p>
+						</div>
+						<div
+							class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-[#FFD166]"
+						>
+							<div class="text-5xl mb-2">🤯</div>
+							<h3 class="font-bold text-xl mb-2">精度の限界</h3>
+							<p class="text-gray-600">
+								「誰が言った？」発言者の取り違えや、専門用語の聞き間違いが頻発する。
+							</p>
+						</div>
+						<div
+							class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-[#06D6A0]"
+						>
+							<div class="text-5xl mb-2">📄</div>
+							<h3 class="font-bold text-xl mb-2">
+								フォーマットの手間
+							</h3>
+							<p class="text-gray-600">
+								会社の規定フォーマットに毎回手作業で合わせるのが面倒。
+							</p>
+						</div>
+					</div>
+				</section>
+
+				<section id="solution-comparison">
+					<div class="text-center mb-8">
+						<h2 class="text-2xl font-bold">
+							AIツールがその悩みを解決します
+						</h2>
+						<p class="mt-2 text-gray-600">
+							会議の形式に合わせて最適なツールを使い分けるのが成功の鍵です。
+						</p>
+					</div>
+					<div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+						<div
+							class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center"
+						>
+							<div class="text-center md:text-left">
+								<h3
+									class="text-xl font-bold mb-4"
+									style="color: #118ab2"
+								>
+									ツール別強み分析
+								</h3>
+								<p class="text-gray-700 mb-2">
+									<strong
+										class="font-bold"
+										style="color: #118ab2"
+										>Google Meet + Gemini</strong
+									>は、オンライン会議に特化し、リアルタイム処理と話者識別に優れています。会議が終了すると同時に、ほぼ完成形の議事録が手に入ります。
+								</p>
+								<p class="text-gray-700">
+									一方、<strong
+										class="font-bold"
+										style="color: #06d6a0"
+										>Notebook LM</strong
+									>は、対面会議などで録音した音声ファイルを元に、後から高精度な文字起こしを行う場合に強力です。汎用性の高さが魅力です。
+								</p>
+							</div>
+							<div class="chart-container">
+								<canvas id="toolRadarChart"></canvas>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<section id="workflow">
+					<div class="text-center mb-8">
+						<h2 class="text-2xl font-bold">
+							会社のフォーマットに一瞬で変換
+						</h2>
+						<p class="mt-2 text-gray-600">
+							Geminiの「Gems」機能で、繰り返し作業を完全自動化。
+						</p>
+					</div>
+					<div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+						<div
+							class="flex flex-col md:flex-row justify-around items-center text-center gap-4"
+						>
+							<div class="flex-1 flex flex-col items-center">
+								<div
+									class="w-24 h-24 rounded-full flex items-center justify-center text-white text-3xl font-bold"
+									style="background-color: #118ab2"
+								>
+									1
+								</div>
+								<h3 class="font-bold my-3">Meetで議事録生成</h3>
+								<p class="text-gray-600 text-sm">
+									会議終了後、自動生成された議事録をドライブに保存。
+								</p>
+							</div>
+							<div
+								class="hidden md:block flowchart-arrow transform rotate-90"
+							></div>
+							<div class="block md:hidden flowchart-arrow"></div>
+							<div class="flex-1 flex flex-col items-center">
+								<div
+									class="w-24 h-24 rounded-full flex items-center justify-center text-white text-3xl font-bold"
+									style="background-color: #06d6a0"
+								>
+									2
+								</div>
+								<h3 class="font-bold my-3">Gemを準備</h3>
+								<p class="text-gray-600 text-sm">
+									会社のフォーマット（日付、参加者、決定事項など）を指示としてGemに一度だけ登録。
+								</p>
+							</div>
+							<div
+								class="hidden md:block flowchart-arrow transform rotate-90"
+							></div>
+							<div class="block md:hidden flowchart-arrow"></div>
+							<div class="flex-1 flex flex-col items-center">
+								<div
+									class="w-24 h-24 rounded-full flex items-center justify-center text-white text-3xl font-bold"
+									style="background-color: #ff6b6b"
+								>
+									3
+								</div>
+								<h3 class="font-bold my-3">実行＆完成</h3>
+								<p class="text-gray-600 text-sm">
+									Gemに議事録を読み込ませるだけで、フォーマット通りの完璧な議事録が一瞬で完成。
+								</p>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<section id="future">
+					<div class="text-center mb-8">
+						<h2 class="text-2xl font-bold">
+							議事録の未来：『読む』から『質問する』へ
+						</h2>
+						<p class="mt-2 text-gray-600">
+							Notebook
+							LMの「インタラクティブモード」が働き方を変える。
+						</p>
+					</div>
+					<div
+						class="bg-[#073B4C] p-6 md:p-8 rounded-xl shadow-lg max-w-2xl mx-auto"
+					>
+						<div class="space-y-4">
+							<div class="flex justify-end">
+								<div
+									class="bg-white text-gray-800 p-3 rounded-lg rounded-br-none max-w-xs md:max-w-md"
+								>
+									<p class="font-bold">あなた:</p>
+									<p>
+										先週の定例会議で決まった、新機能のリリース日はいつでしたか？
+									</p>
+								</div>
+							</div>
+							<div class="flex justify-start">
+								<div
+									class="p-3 rounded-lg rounded-bl-none max-w-xs md:max-w-md"
+									style="
+										background-color: #118ab2;
+										color: white;
+									"
+								>
+									<p class="font-bold">AIアシスタント:</p>
+									<p>
+										はい、記録によると新機能のリリース日は【来月の15日】に決定しています。担当は佐藤さんです。
+									</p>
+								</div>
+							</div>
+							<div class="flex justify-end">
+								<div
+									class="bg-white text-gray-800 p-3 rounded-lg rounded-br-none max-w-xs md:max-w-md"
+								>
+									<p class="font-bold">あなた:</p>
+									<p>ありがとう！</p>
+								</div>
+							</div>
+						</div>
+						<p
+							class="text-center text-white mt-6 text-sm opacity-80"
+						>
+							※この機能は将来的に日本語版でも実装予定です。
+						</p>
+					</div>
+				</section>
+
+				<section id="benefits">
+					<div class="text-center mb-8">
+						<h2 class="text-2xl font-bold">
+							AI導入で得られる圧倒的な効率化
+						</h2>
+						<p class="mt-2 text-gray-600">
+							議事録作成にかけていた時間の大部分を、より創造的な仕事に。
+						</p>
+					</div>
+					<div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+						<div
+							class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center"
+						>
+							<div class="chart-container">
+								<canvas id="timeSavedDonutChart"></canvas>
+							</div>
+							<div class="text-center md:text-left">
+								<h3
+									class="text-xl font-bold mb-4"
+									style="color: #118ab2"
+								>
+									削減される作業の内訳
+								</h3>
+								<p class="text-gray-700">
+									AIを導入することで、特に「文字起こし」「要約」「フォーマット調整」という、これまで人間が時間をかけて行っていた単純作業が劇的に削減されます。これにより、会議の決定事項を即座に共有し、次のアクションに素早く移ることが可能になります。
+								</p>
+							</div>
+						</div>
+					</div>
+				</section>
+			</main>
+
+			<footer class="text-center mt-16 py-8 border-t">
+				<p class="text-gray-500">
+					このインフォグラフィックは、Google MeetとNotebook
+					LMの機能に基づき作成されました。
+				</p>
+				<p class="text-xs text-gray-400 mt-2">
+					※記載されている機能は、Google WorkspaceのBusiness
+					Standard以上のプランで利用可能です。
+				</p>
+			</footer>
+		</div>
+
+		<script>
+			document.addEventListener("DOMContentLoaded", function () {
+				try {
+					const radarChartElement =
+						document.getElementById("toolRadarChart");
+					if (radarChartElement) {
+						const radarChartCtx =
+							radarChartElement.getContext("2d");
+						new Chart(radarChartCtx, {
+							type: "radar",
+							data: {
+								labels: [
+									"リアルタイム性",
+									"話者識別精度",
+									["対面会議での", "利用"],
+									"自動要約",
+									"フォーマットの柔軟性",
+								],
+								datasets: [
+									{
+										label: "Google Meet + Gemini",
+										data: [5, 5, 2, 5, 4],
+										backgroundColor:
+											"rgba(17, 138, 178, 0.2)",
+										borderColor: "#118AB2",
+										pointBackgroundColor: "#118AB2",
+										pointBorderColor: "#fff",
+										pointHoverBackgroundColor: "#fff",
+										pointHoverBorderColor: "#118AB2",
+									},
+									{
+										label: "Notebook LM",
+										data: [2, 3, 5, 4, 3],
+										backgroundColor:
+											"rgba(6, 214, 160, 0.2)",
+										borderColor: "#06D6A0",
+										pointBackgroundColor: "#06D6A0",
+										pointBorderColor: "#fff",
+										pointHoverBackgroundColor: "#fff",
+										pointHoverBorderColor: "#06D6A0",
+									},
+								],
+							},
+							options: {
+								responsive: true,
+								maintainAspectRatio: false,
+								scales: {
+									r: {
+										angleLines: {
+											color: "rgba(7, 59, 76, 0.1)",
+										},
+										grid: { color: "rgba(7, 59, 76, 0.1)" },
+										pointLabels: {
+											font: {
+												size: 13,
+												family: "'Inter', 'Noto Sans JP', sans-serif",
+											},
+											color: "#073B4C",
+										},
+										ticks: {
+											backdropColor: "transparent",
+											stepSize: 1,
+											font: { size: 10 },
+										},
+										suggestedMin: 0,
+										suggestedMax: 5,
+									},
+								},
+								plugins: {
+									legend: {
+										position: "top",
+									},
+									tooltip: {
+										callbacks: {
+											title: function (tooltipItems) {
+												const item = tooltipItems[0];
+												let label =
+													item.chart.data.labels[
+														item.dataIndex
+													];
+												return Array.isArray(label)
+													? label.join(" ")
+													: label;
+											},
+										},
+									},
+								},
+							},
+						});
+					}
+
+					const donutChartElement = document.getElementById(
+						"timeSavedDonutChart"
+					);
+					if (donutChartElement) {
+						const donutChartCtx =
+							donutChartElement.getContext("2d");
+						new Chart(donutChartCtx, {
+							type: "doughnut",
+							data: {
+								labels: [
+									"文字起こし作業",
+									"フォーマット調整",
+									"要約作成",
+								],
+								datasets: [
+									{
+										label: "削減される時間",
+										data: [50, 25, 25],
+										backgroundColor: [
+											"#118AB2",
+											"#06D6A0",
+											"#FFD166",
+										],
+										borderColor: "#fff",
+										hoverOffset: 4,
+									},
+								],
+							},
+							options: {
+								responsive: true,
+								maintainAspectRatio: false,
+								cutout: "60%",
+								plugins: {
+									legend: {
+										position: "bottom",
+										labels: {
+											font: {
+												size: 14,
+												family: "'Inter', 'Noto Sans JP', sans-serif",
+											},
+										},
+									},
+									tooltip: {
+										callbacks: {
+											title: function (tooltipItems) {
+												const item = tooltipItems[0];
+												let label =
+													item.chart.data.labels[
+														item.dataIndex
+													];
+												return Array.isArray(label)
+													? label.join(" ")
+													: label;
+											},
+										},
+									},
+								},
+							},
+						});
+					}
+				} catch (e) {
+					console.error("チャートの描画に失敗しました:", e);
+				}
+			});
+		</script>
+	</body>
+</html>
