@@ -3,6 +3,9 @@ name: Update README with GitHub Pages Links
 on:
     push:
         branches: [main]
+        paths:
+            - "*/index.html"
+            - ".github/workflows/update-readme.yml"
     workflow_dispatch:
 
 permissions:
@@ -54,6 +57,6 @@ jobs:
                   if git diff --staged --quiet; then
                     echo "No changes to commit"
                   else
-                    git commit -m "Auto-update README with GitHub Pages links"
+                    git commit -m "Auto-update README with GitHub Pages links [skip ci]"
                     git push
                   fi
