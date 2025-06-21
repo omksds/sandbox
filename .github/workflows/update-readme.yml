@@ -1,0 +1,67 @@
+name: Update README with GitHub Pages Links
+
+on:
+    push:
+        branches: [main]
+    workflow_dispatch:
+
+jobs:
+    update-readme:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
+              with:
+                  token: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Update README with page links
+              run: |
+                  cp README.md README.md.bak
+
+                  START_MARKER="<!-- AUTO-GENERATED-LINKS-START -->"
+                  END_MARKER="<!-- AUTO-GENERATED-LINKS-END -->"
+
+                  DIRS_WITH_INDEX=$(find . -name "index.html" -not -path "./.git/*" | sed 's|/index.html||' | sed 's|^./||' | sort)
+
+                  LINKS_SECTION=""
+                  BASE_URL="https://omksds.github.io/sandbox"
+
+                  for dir in $DIRS_WITH_INDEX; do
+                    if [ "$dir" != "." ]; then
+                      DIR_NAME=$(basename "$dir")
+                      if [[ $DIR_NAME =~ ^[0-9]{7} ]]; then
+                        YEAR=${DIR_NAME:0:4}
+                        MONTH=${DIR_NAME:4:1}
+                        DAY=${DIR_NAME:5:2}
+                        MONTH=$((10#$MONTH))
+                        DAY=$((10#$DAY))
+                        DISPLAY_NAME="$YEAR/$MONTH/$DAY"
+                      else
+                        DISPLAY_NAME="$DIR_NAME"
+                      fi
+                      
+                      LINKS_SECTION="$LINKS_SECTION- [$DISPLAY_NAME]($BASE_URL/$dir/)"$'\n'
+                    fi
+                  done
+
+                  sed "/$START_MARKER/q" README.md.bak > README_temp.md
+                  echo "<!-- このセクションはGitHub Actionsによって自動更新されます -->" >> README_temp.md
+                  echo "" >> README_temp.md
+                  echo "$LINKS_SECTION" >> README_temp.md
+                  sed -n "/$END_MARKER/,\$p" README.md.bak >> README_temp.md
+
+                  mv README_temp.md README.md
+                  rm README.md.bak
+
+            - name: Commit changes
+              run: |
+                  git config --local user.email "action@github.com"
+                  git config --local user.name "GitHub Action"
+                  git add README.md
+                  if git diff --staged --quiet; then
+                    echo "No changes to commit"
+                  else
+                    git commit -m "Auto-update README with GitHub Pages links"
+                    git push
+                  fi
