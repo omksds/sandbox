@@ -37,11 +37,18 @@ export default function Home() {
   const [results, setResults] = useState<SimulationOutput | null>(null);
 
   // Handler for input changes
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setInputs(prev => ({
       ...prev,
       [name]: Number(value)
+    }));
+  };
+
+  const handleSliderChange = (name: keyof SimulationInput, value: number) => {
+    setInputs(prev => ({
+      ...prev,
+      [name]: value
     }));
   };
 
@@ -79,24 +86,30 @@ export default function Home() {
   }, [inputs]);
 
   return (
-    <main className="container mx-auto p-4 md:p-8 bg-gray-50 min-h-screen">
-      <header className="text-center mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
-          不動産投資 債務超過シミュレーター
-        </h1>
-        <p className="text-gray-600 mt-2">
-          資本金、借入、支出を入力して債務超過リスクを可視化します。
-        </p>
-      </header>
+    <div className="min-h-screen bg-slate-50 text-slate-800">
+      <main className="container mx-auto px-4 py-8 md:px-6 md:py-12">
+        <header className="text-center mb-10 md:mb-16">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight">
+            不動産投資 債務超過シミュレーター
+          </h1>
+          <p className="mt-3 text-lg text-slate-600 max-w-2xl mx-auto">
+            スライダーを動かして、あなたの投資が財務的に健全か、リアルタイムで探りましょう。
+          </p>
+        </header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-          <SimulationForm inputs={inputs} onInputChange={handleInputChange} />
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 xl:gap-12 max-w-7xl mx-auto">
+          <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-lg border border-slate-200">
+            <SimulationForm
+              inputs={inputs}
+              onInputChange={handleInputChange}
+              onSliderChange={handleSliderChange}
+            />
+          </div>
+          <div className="lg:col-span-3 bg-white p-6 rounded-xl shadow-lg border border-slate-200">
+            <SimulationResult results={results} />
+          </div>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-          <SimulationResult results={results} />
-        </div>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }

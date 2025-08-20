@@ -15,39 +15,60 @@ interface SimulationInput {
 interface Props {
   inputs: SimulationInput;
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onSliderChange: (name: keyof SimulationInput, value: number) => void;
 }
 
-const SimulationForm: React.FC<Props> = ({ inputs, onInputChange }) => {
+const SimulationForm: React.FC<Props> = ({ inputs, onInputChange, onSliderChange }) => {
 
-  const fields = [
-    { id: 'capital', label: '資本金 (万円)', description: '会社の自己資金です。' },
-    { id: 'loan', label: '社長貸付 (万円)', description: '社長からの借入金で、負債として計上されます。' },
-    { id: 'propertyPrice', label: '不動産取得価格 (万円)', description: '購入した不動産の価格で、資産となります。' },
-    { id: 'reformCost', label: 'リフォーム費用 (万円)', description: '資産計上されにくい支出で、自己資本を減少させます。' },
-    { id: 'rentIncome', label: '月間家賃収入 (万円)', description: '月々の家賃収入の合計です。' },
-    { id: 'expenses', label: '月間経費 (万円)', description: '管理費、固定資産税、修繕費などの合計です。' },
+  const fields: (keyof SimulationInput)[] = [
+    'capital', 'loan', 'propertyPrice', 'reformCost', 'rentIncome', 'expenses'
   ];
 
+  const fieldConfig = {
+    capital: { label: '資本金', description: '会社の自己資金です。', min: 0, max: 1000, step: 10 },
+    loan: { label: '社長貸付', description: '社長からの借入金で、負債として計上されます。', min: 0, max: 5000, step: 100 },
+    propertyPrice: { label: '不動産取得価格', description: '購入した不動産の価格で、資産となります。', min: 0, max: 10000, step: 100 },
+    reformCost: { label: 'リフォーム費用', description: '資産計上されにくい支出で、自己資本を減少させます。', min: 0, max: 500, step: 10 },
+    rentIncome: { label: '月間家賃収入', description: '月々の家賃収入の合計です。', min: 0, max: 100, step: 1 },
+    expenses: { label: '月間経費', description: '管理費、固定資産税、修繕費などの合計です。', min: 0, max: 50, step: 1 },
+  };
+
   return (
-    <div>
-      <h2 className="text-xl font-semibold mb-4 text-gray-800">シミュレーション条件</h2>
-      <div className="space-y-6">
-        {fields.map(field => (
-          <div key={field.id}>
-            <label htmlFor={field.id} className="block text-sm font-medium text-gray-700">
-              {field.label}
-            </label>
-            <input
-              type="number"
-              id={field.id}
-              name={field.id}
-              value={inputs[field.id as keyof SimulationInput]}
-              onChange={onInputChange}
-              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            />
-            <p className="mt-2 text-xs text-gray-500">{field.description}</p>
-          </div>
-        ))}
+    <div className="flex flex-col h-full">
+      <h2 className="text-2xl font-bold mb-6 text-slate-900">シミュレーション条件</h2>
+      <div className="space-y-6 flex-grow">
+        {fields.map(id => {
+          const config = fieldConfig[id];
+          const value = inputs[id];
+          return (
+            <div key={id}>
+              <div className="flex justify-between items-center mb-1">
+                <label htmlFor={id} className="block text-sm font-medium text-slate-700">
+                  {config.label}
+                </label>
+                <input
+                  type="number"
+                  id={id}
+                  name={id}
+                  value={value}
+                  onChange={onInputChange}
+                  className="w-28 text-right px-2 py-1 bg-slate-100 border border-slate-300 rounded-md shadow-sm sm:text-sm"
+                  step={config.step}
+                />
+              </div>
+              <input
+                type="range"
+                min={config.min}
+                max={config.max}
+                step={config.step}
+                value={value}
+                onChange={(e) => onSliderChange(id, Number(e.target.value))}
+                className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+              />
+              <p className="mt-2 text-xs text-slate-500">{config.description} (単位: 万円)</p>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
