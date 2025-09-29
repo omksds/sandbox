@@ -1,0 +1,87 @@
+{
+  "name": "Gmail受信メール処理ワークフロー（Step1）",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {}
+      },
+      "id": "d4f2c0a1-8b3e-4c5a-9d7f-1e2a3b4c5d6e",
+      "name": "Gmail Trigger",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 400]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "sender",
+              "value": "={{ $json.payload.headers.find(h => h.name === 'From').value }}"
+            },
+            {
+              "name": "subject",
+              "value": "={{ $json.payload.headers.find(h => h.name === 'Subject').value }}"
+            },
+            {
+              "name": "body",
+              "value": "={{ $json.snippet }}"
+            },
+            {
+              "name": "received_time",
+              "value": "={{ new Date($json.internalDate * 1).toISOString() }}"
+            },
+            {
+              "name": "sender_clean",
+              "value": "={{ $json.payload.headers.find(h => h.name === 'From').value.split('<')[0].trim() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "name": "メール情報抽出",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [460, 400]
+    }
+  ],
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "メール情報抽出",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2024-09-29T08:30:00.000Z",
+      "updatedAt": "2024-09-29T08:30:00.000Z",
+      "id": "gmail-automation",
+      "name": "Gmail自動化"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2024-09-29T08:30:00.000Z",
+  "versionId": "1"
+}

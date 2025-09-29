@@ -1,0 +1,337 @@
+{
+  "name": "Gmail受信メール処理ワークフロー（Step4）",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "labelIds": ["Label_3"]
+        },
+        "options": {}
+      },
+      "id": "4f05ba45-26f1-4437-abde-04280760c87a",
+      "name": "Gmail Trigger",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [1184, 656],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "epontFRIYTzDzq75",
+          "name": "o.mss.baske"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "sender",
+              "value": "={{ $json.payload.headers.find(h => h.name === 'From').value }}"
+            },
+            {
+              "name": "subject",
+              "value": "={{ $json.payload.headers.find(h => h.name === 'Subject').value }}"
+            },
+            {
+              "name": "body",
+              "value": "={{ $json.snippet }}"
+            },
+            {
+              "name": "received_time",
+              "value": "={{ new Date($json.internalDate * 1).toISOString() }}"
+            },
+            {
+              "name": "sender_clean",
+              "value": "={{ $json.payload.headers.find(h => h.name === 'From').value.split('<')[0].trim() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "af18820e-9f79-45f0-99a6-b0367e9178e6",
+      "name": "メール情報抽出",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1408, 656]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "以下のメール内容を要約して、以下の形式で日本語で返してください：\n\n【要約】\n・[箇条書きで要約]\n\n【送信者】{{ $json.sender_clean }}\n【件名】{{ $json.subject }}\n【日時】{{ $json.received_time }}\n【ステータス】未対応\n【次のアクション】\n・[必要なアクションがあれば記載、なければ「なし」]\n【締切/日付】\n・[期限や重要な日付があれば記載、なければ「なし」]\n\n【メール本文】\n{{ $json.body }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [1632, 656],
+      "id": "9a6f1d70-ae94-4e89-b8d5-ac96868df7f6",
+      "name": "OpenAI要約処理",
+      "credentials": {
+        "openAiApi": {
+          "id": "XyRIdbTfrpmBT5RK",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "sender_name",
+              "value": "={{ $('メール情報抽出').item.json.sender_clean }}"
+            },
+            {
+              "name": "summary_content",
+              "value": "={{ $json.content }}"
+            },
+            {
+              "name": "summary_extract",
+              "value": "={{ $json.content.split('【要約】')[1] ? $json.content.split('【要約】')[1].split('【送信者】')[0].trim() : '要約なし' }}"
+            },
+            {
+              "name": "next_action",
+              "value": "={{ $json.content.includes('【次のアクション】') ? $json.content.split('【次のアクション】')[1].split('【締切/日付】')[0].trim() : 'なし' }}"
+            },
+            {
+              "name": "deadline",
+              "value": "={{ $json.content.includes('【締切/日付】') ? $json.content.split('【締切/日付】')[1].trim() : 'なし' }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "83702bd0-fab2-40e2-a1ef-5805395ddb79",
+      "name": "要約結果統合",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1856, 656]
+    },
+    {
+      "parameters": {
+        "folderId": "1cCiiz5tMpoGxzVRAWFgJNKPJ3tvzPyDN",
+        "title": "={{ $json.sender_name }} - メール記録"
+      },
+      "id": "266acec2-d804-4de3-9d4f-265a870f9230",
+      "name": "Google Docs作成",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [2080, 576],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "Ub3NiAYtTPduiS2f",
+          "name": "o.mss.baske"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "14C-p5DuT2Bumx_MxtJ1mLBF3P0J2u377mBzMXOdaw-E",
+          "mode": "list",
+          "cachedResultName": "Gmail-Dashboard",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14C-p5DuT2Bumx_MxtJ1mLBF3P0J2u377mBzMXOdaw-E/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "シート1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14C-p5DuT2Bumx_MxtJ1mLBF3P0J2u377mBzMXOdaw-E/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "相手先": "={{ $json.sender_name }}",
+            "最終更新日時": "={{ $('メール情報抽出').item.json.received_time }}",
+            "最新要約": "={{ $json.summary_extract }}",
+            "ステータス": "未対応",
+            "次のアクション": "={{ $json.next_action }}",
+            "締切/日付": "={{ $json.deadline }}",
+            "詳細ドキュメントリンク": "={{ $('Google Docs作成').item.json.documentUrl }}"
+          },
+          "matchingColumns": ["相手先"],
+          "schema": [
+            {
+              "id": "相手先",
+              "displayName": "相手先",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "最終更新日時",
+              "displayName": "最終更新日時",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "最新要約",
+              "displayName": "最新要約",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ステータス",
+              "displayName": "ステータス",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "次のアクション",
+              "displayName": "次のアクション",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "締切/日付",
+              "displayName": "締切/日付",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "詳細ドキュメントリンク",
+              "displayName": "詳細ドキュメントリンク",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "cellFormat": "USER_ENTERED"
+        }
+      },
+      "id": "efe0d4c3-5a89-43d8-af50-ecd4363e50a1",
+      "name": "Google Sheets更新",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [2080, 736],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "aT4duvEXK4GnDBMK",
+          "name": "o.mss.baske"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "メール情報抽出",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "メール情報抽出": {
+      "main": [
+        [
+          {
+            "node": "OpenAI要約処理",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI要約処理": {
+      "main": [
+        [
+          {
+            "node": "要約結果統合",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "要約結果統合": {
+      "main": [
+        [
+          {
+            "node": "Google Docs作成",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Google Sheets更新",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f23c6e7d-d65e-44b9-a791-c91222e3e365",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a1451e7a7bb0426bca197410cee042a1d66b3f3dc166de0a060e1b75d661e8f9"
+  },
+  "id": "1y35KXgIoSjYFZyY",
+  "tags": [
+    {
+      "createdAt": "2025-09-29T09:08:04.735Z",
+      "updatedAt": "2025-09-29T09:08:04.735Z",
+      "id": "CoueiOmq51e8qA0q",
+      "name": "Gmail自動化"
+    }
+  ]
+}

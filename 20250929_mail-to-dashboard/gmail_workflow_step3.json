@@ -1,0 +1,156 @@
+{
+  "name": "Gmail受信メール処理ワークフロー（Step3）",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "labelIds": ["Label_3"]
+        },
+        "options": {}
+      },
+      "id": "fa3af6c1-fe8d-4ce5-8fbb-455f177829b6",
+      "name": "Gmail Trigger",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [1088, 352],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "epontFRIYTzDzq75",
+          "name": "o.mss.baske"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "ee153ce1-2819-444c-af6e-4466612361c7",
+      "name": "メール情報抽出",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1312, 352]
+    },
+    {
+      "parameters": {
+        "resource": "document",
+        "operation": "create",
+        "driveId": "myDrive",
+        "folderId": "1cCiiz5tMpoGxzVRAWFgJNKPJ3tvzPyDN",
+        "title": "{{ $('Gmail Trigger').item.json.payload.headers.find(h => h.name === 'From').value.split('<')[0].trim() }} - メール記録"
+      },
+      "id": "d6528bd9-8a3c-4c04-b719-42c7ecbe29f8",
+      "name": "Google Docs作成",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [1968, 352],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "Ub3NiAYtTPduiS2f",
+          "name": "o.mss.baske"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "b6383654-998a-486e-a952-b3a02d85d384",
+      "name": "要約結果統合1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1760, 352]
+    },
+    {
+      "parameters": {
+        "model": "chatgpt-4o-latest",
+        "prompt": "以下のメール内容を要約して、以下の形式で日本語で返してください：\n\n【要約】\n・[箇条書きで要約]\n\n【送信者】{{ $json.payload.headers.find(h => h.name === 'From').value.split('<')[0].trim() }}\n【件名】{{ $json.payload.headers.find(h => h.name === 'Subject').value }}\n【日時】{{ new Date($json.internalDate * 1).toISOString() }}\n【ステータス】未対応\n【次のアクション】\n・[必要なアクションがあれば記載、なければ「なし」]\n【締切/日付】\n・[期限や重要な日付があれば記載、なければ「なし」]\n\n【メール本文】\n{{ $json.snippet }}",
+        "options": {},
+        "requestOptions": {}
+      },
+      "id": "653aaac9-b1c5-4239-a343-d07f2a40fac3",
+      "name": "OpenAI要約処理",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1.1,
+      "position": [1536, 352],
+      "credentials": {
+        "openAiApi": {
+          "id": "XyRIdbTfrpmBT5RK",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "メール情報抽出",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "メール情報抽出": {
+      "main": [
+        [
+          {
+            "node": "OpenAI要約処理",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "要約結果統合1": {
+      "main": [
+        [
+          {
+            "node": "Google Docs作成",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI要約処理": {
+      "main": [
+        [
+          {
+            "node": "要約結果統合1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a57a65dc-d2f5-4bc4-a44b-79062be880dc",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a1451e7a7bb0426bca197410cee042a1d66b3f3dc166de0a060e1b75d661e8f9"
+  },
+  "id": "1y35KXgIoSjYFZyY",
+  "tags": [
+    {
+      "createdAt": "2025-09-29T09:08:04.735Z",
+      "updatedAt": "2025-09-29T09:08:04.735Z",
+      "id": "CoueiOmq51e8qA0q",
+      "name": "Gmail自動化"
+    }
+  ]
+}
