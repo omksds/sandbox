@@ -1,0 +1,355 @@
+/* AI事業部ページ用スタイル（既存サイトのカラースキームに統一） */
+/* 既存サイト（chizai-biz.com）のダークネイビー基調 + ピンク/赤アクセント */
+
+:root {
+  --brand-dark: #1a2332; /* ダークネイビー（既存サイトメイン） */
+  --brand-accent: #e91e63; /* ピンク/赤系アクセント */
+  --brand-contrast: #ffffff;
+  --text-muted: #6b7280;
+  --bg-light: #f9fafb;
+  --border-light: #e5e7eb;
+}
+
+header.site-header {
+  background: var(--brand-dark);
+  border-bottom: none;
+  padding: 1.25rem 0;
+}
+
+header.site-header .brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  color: var(--brand-contrast);
+  text-decoration: none;
+  font-size: 1.1rem;
+}
+
+header.site-header nav ul {
+  gap: 1rem;
+}
+
+header.site-header nav ul li a {
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 500;
+  padding: 0.5rem 0.75rem;
+  display: inline-block;
+}
+
+header.site-header nav ul li a:hover,
+header.site-header nav ul li a[aria-current] {
+  color: var(--brand-contrast);
+  font-weight: 600;
+}
+
+nav.site-nav a[role="button"],
+nav.site-nav a.button {
+  background: var(--brand-accent);
+  color: var(--brand-contrast);
+  border: none;
+}
+
+.site-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
+
+.hero {
+  background: linear-gradient(135deg, var(--brand-dark) 0%, #2c3e50 100%);
+  color: var(--brand-contrast);
+  border: none;
+  border-radius: 0;
+  padding: 4rem 2rem;
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.hero h1 {
+  margin-bottom: 1rem;
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+.hero p.lead {
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 0;
+  font-size: 1.15rem;
+}
+
+.card {
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  padding: 1.5rem;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s;
+}
+
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.card h3 {
+  color: var(--brand-dark);
+  margin-bottom: 0.75rem;
+  font-size: 1.25rem;
+}
+
+.card p {
+  line-height: 1.7;
+}
+
+.card small {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+footer.site-footer {
+  background: var(--brand-dark);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.9rem;
+  padding: 2rem 1rem;
+  text-align: center;
+  border-top: none;
+}
+
+footer.site-footer small {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* 細かい可読性向上 */
+ul.tight > li { 
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+ul.relaxed > li { 
+  margin-bottom: 0.75rem;
+  line-height: 1.7;
+}
+
+/* リストの視認性向上 */
+section > p,
+.card > p {
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+
+section > p:last-child,
+.card > p:last-child {
+  margin-bottom: 0;
+}
+
+/* セクション見出し */
+section {
+  margin-bottom: 3rem;
+}
+
+section h2 {
+  color: var(--brand-dark);
+  border-left: 4px solid var(--brand-accent);
+  padding-left: 1rem;
+  margin-top: 4rem;
+  margin-bottom: 1.5rem;
+  font-size: 1.75rem;
+}
+
+section:first-of-type h2 {
+  margin-top: 0;
+}
+
+/* detailsの見栄え微調整 */
+details {
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.75rem;
+  background: var(--bg-light);
+  transition: all 0.2s;
+}
+details summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--brand-dark);
+  font-size: 1.05rem;
+}
+details summary strong {
+  color: var(--brand-dark);
+}
+details[open] {
+  background: #fff;
+  border-color: var(--brand-accent);
+}
+
+details p,
+details ul,
+details ol {
+  margin-top: 1rem;
+  line-height: 1.7;
+}
+
+details small {
+  color: var(--text-muted);
+}
+
+/* ボタンの見た目調整 */
+a.button,
+a[role="button"] {
+  display: inline-block;
+  padding: 0.875rem 2rem;
+  background: var(--brand-accent);
+  color: var(--brand-contrast);
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: background 0.2s;
+  font-size: 1rem;
+}
+a.button:hover,
+a[role="button"]:hover {
+  background: #c2185b;
+  color: var(--brand-contrast);
+}
+
+/* グリッドレイアウトの調整 */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+/* プロフィールセクション */
+.profile-container {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 3rem;
+  margin-top: 2rem;
+}
+
+.profile-photo {
+  position: relative;
+}
+
+.photo-placeholder {
+  width: 200px;
+  height: 200px;
+  background: linear-gradient(135deg, var(--brand-dark) 0%, #2c3e50 100%);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.profile-content h3 {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.profile-name {
+  color: var(--brand-dark);
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  margin-top: 0;
+}
+
+.profile-roles {
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.profile-roles ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.profile-roles ul li {
+  color: var(--brand-dark);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.profile-description p {
+  margin-bottom: 1rem;
+  line-height: 1.8;
+}
+
+/* 実績セクション */
+.achievements {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.achievements .card h3 {
+  color: var(--brand-dark);
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--brand-accent);
+}
+
+.achievements .card ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.achievements .card ul li {
+  padding-left: 1.5rem;
+  position: relative;
+  margin-bottom: 0.75rem;
+  line-height: 1.7;
+}
+
+.achievements .card ul li::before {
+  content: "▸";
+  position: absolute;
+  left: 0;
+  color: var(--brand-accent);
+  font-weight: bold;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .hero {
+    padding: 3rem 1.5rem;
+  }
+  
+  .hero h1 {
+    font-size: 2rem;
+  }
+  
+  .hero p.lead {
+    font-size: 1rem;
+  }
+  
+  section h2 {
+    font-size: 1.5rem;
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .profile-container {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .photo-placeholder {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+  }
+  
+  .achievements {
+    grid-template-columns: 1fr;
+  }
+}
+
+
