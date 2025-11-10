@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>求人エージェント SPA</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Interフォントの読み込み */
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap");
+      body {
+        font-family: "Inter", "Noto Sans JP", sans-serif;
+        background-color: #f8f9fa; /* サイト全体の背景色 */
+      }
+      /* タブのアクティブ/非アクティブ スタイル */
+      .tab-btn {
+        @apply px-4 py-3 font-medium text-sm text-gray-500 border-b-2 border-transparent cursor-pointer transition-colors duration-200;
+      }
+      .tab-btn.active {
+        @apply text-blue-600 border-blue-600;
+      }
+      .tab-btn:hover {
+        @apply text-blue-500;
+      }
+      /* カードのホバースタイル */
+      .job-card:hover {
+        @apply shadow-lg transform -translate-y-1;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100">
+    <!-- ヘッダー / ナビゲーション -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+      <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <!-- ロゴ -->
+          <div class="flex-shrink-0 flex items-center">
+            <a href="#search" class="text-2xl font-bold text-blue-600">
+              AgentHub
+            </a>
+          </div>
+          <!-- ナビゲーションリンク -->
+          <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+            <a
+              href="#search"
+              class="nav-link inline-flex items-center px-1 pt-1 border-b-2 border-blue-500 text-sm font-medium text-gray-900"
+            >
+              求人検索
+            </a>
+            <a
+              href="#dashboard"
+              class="nav-link inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
+            >
+              ダッシュボード
+            </a>
+            <a
+              href="#fees"
+              class="nav-link inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
+            >
+              手数料
+            </a>
+          </div>
+          <!-- ユーザーメニュー -->
+          <div class="hidden sm:ml-6 sm:flex sm:items-center">
+            <button
+              class="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              <svg
+                class="h-6 w-6"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 00-5-5.917V5a1 1 0 00-2 0v.083A6 6 0 006 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                />
+              </svg>
+            </button>
+            <!-- プロフィール画像 -->
+            <div class="ml-3 relative">
+              <button
+                class="bg-white rounded-full flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                <img
+                  class="h-8 w-8 rounded-full"
+                  src="https://placehold.co/32x32/E0E7FF/4F46E5?text=A"
+                  alt="User profile"
+                />
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <!-- メインコンテンツ (SPAの描画領域) -->
+    <main id="app-content" class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- コンテンツはJavaScriptによってここに挿入されます -->
+    </main>
+
+    <!-- フッター -->
+    <footer class="bg-white border-t border-gray-200 mt-12">
+      <div
+        class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-sm text-gray-500"
+      >
+        &copy; 2025 AgentHub. All rights reserved.
+      </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+      // --- モックデータ ---
+      const mockJobs = [
+        {
+          id: 1,
+          company: "株式会社WEEVA",
+          title:
+            "【20代面接確約条件あり】5年で10億をつくった経営者直下！未経験から年収1500万円も目指せる！オープンポジション（法人営業/コンサル職）を募集！",
+          type: "企業求人",
+          status: "正社員",
+          tags: [
+            "23歳-29歳",
+            "性別不問",
+            "外国籍NG",
+            "大卒以上",
+            "職種未経験OK",
+            "業種未経験OK",
+          ],
+          salary: "450万円-600万円 (月給: 35万円-40万円)",
+          location: "東京",
+          image: "https://placehold.co/600x400/CCCCCC/FFFFFF?text=CIRCUS+AGENT",
+          companyImages: [
+            "https://placehold.co/200x150/CCCCCC/FFFFFF?text=WEEVA+1",
+            "https://placehold.co/200x150/CCCCCC/FFFFFF?text=WEEVA+2",
+            "https://placehold.co/200x150/CCCCCC/FFFFFF?text=WEEVA+3",
+            "https://placehold.co/200x150/CCCCCC/FFFFFF?text=WEEVA+4",
+          ],
+          companyInfo: {
+            established: "2020年",
+            phase: "ベンチャー",
+            employees: "10 - 30名",
+            address: "160-0023 新宿区西新宿3丁目 6-4 CIRCLES西新宿 5階",
+            listed: "未上場",
+            avgAge: "28歳",
+            genderRatio: "男女比 7:3", // 仮
+          },
+          jobDetails: {
+            occupation: "フィールドセールス (法人向け)",
+            position: "メンバー",
+          },
+          requirements: {
+            must: ["社会人経験がある方"],
+            welcome: [
+              "入社事例: 金融機関、人材営業、エンジニア、研究職など業界職種問わず",
+              "※ポテンシャル採用が主です",
+            ],
+            potential: [
+              "素直さ100%で、言われたことを全力で吸収し、即実行に移す方 (心理的柔軟性がある)",
+              "やり切る力がある。目標掲げて達成してきてる方",
+              "上昇志向があり、成長欲求を持ち合わせている方",
+              "コミュニケーションを通じてチームとして、目的達成のための適切なインプット/アウトプットができる方",
+              "仲間思いで、見返りを求めない愛情を捧げられる方",
+            ],
+          },
+          attractiveness: {
+            vision:
+              "私たちWEEVAは、クライアントの受注率と単価を最大化し、そこから得られる知見を仕組み化することで、高い再現性を持つ営業・経営モデルを構築してきました。...",
+            business:
+              "WEEVAは、経営者と一緒に「どうすれば売上が伸びるか」を考え、実際に営業現場で成果を出すところまで伴走するコンサルティング会社です。...",
+            services: [
+              {
+                title: "営業支援",
+                content:
+                  "「どうすれば売れるのか」を一緒に考え、営業のやり方を教える仕事。",
+              },
+              {
+                title: "創業融資支援",
+                content: "起業したい人のために、銀行から資金を借りるサポート。",
+              },
+              {
+                title: "事業計画書作成",
+                content:
+                  "「これからどんなビジネスをするのか」を形にする計画書を、スピーディーかつ正確に作成。",
+              },
+              {
+                title: "クラウドファンディング代行",
+                content: "クラファンページの企画から広告までをトータルで代行。",
+              },
+              {
+                title: "WEBマーケティング",
+                content:
+                  "SNSや動画広告を使って「認知度を上げる・お客様を集める」支援。",
+              },
+              {
+                title: "補助金・助成金サポート",
+                content:
+                  "「国や自治体の支援制度をどう活用するか」を一緒に考え、申請から活用までサポート。",
+              },
+            ],
+          },
+          agentInfo: {
+            mission: [
+              "【補足】",
+              "・2025年2月から毎月2名は採用継続",
+              "・足元で4名早期に採用したい温度感",
+              "・入社時期: 即可能",
+              "【背景】",
+              "・今期2名営業ポジション採用し、営業基盤が構築され、安定した案件獲得ができている",
+              "・今期採用した5名の育成が順調に進行し、一部育成に関与できるメンバーもいる",
+              "・職位: メンバー (マネージャー候補)",
+            ],
+            persona: [
+              "【(あくまでも) 理想の人物像、ペルソナ】",
+              "・25歳 (社会人3年目くらい)",
+              "・男性",
+              "・独身",
+              "・関東在住",
+              "・現年収350〜500万のレンジ",
+              "・学歴: MARCH、関関同立の水準以上 (高校+大学で偏差値110超)",
+              "・職歴: ベンチャー系、もしくはいわゆる大手 (金融、不動産、広告、人材とか良い) とりあえず入ったような方",
+            ],
+          },
+        },
+        {
+          id: 2,
+          company: "ABCソリューションズ株式会社",
+          title: "大手クライアント多数！DXを推進するITコンサルタント募集",
+          type: "企業求人",
+          status: "正社員",
+          tags: ["30歳-39歳", "性別不問", "大卒以上", "職種経験者"],
+          salary: "600万円-1000万円",
+          location: "大阪",
+          image:
+            "https://placehold.co/600x400/E0E7FF/4F46E5?text=ABC+Solutions",
+          companyImages: [
+            "https://placehold.co/200x150/E0E7FF/4F46E5?text=ABC+1",
+          ],
+          companyInfo: {
+            established: "2010年",
+            phase: "安定",
+            employees: "200 - 300名",
+            address: "大阪市北区",
+            listed: "上場",
+            avgAge: "35歳",
+            genderRatio: "男女比 6:4",
+          },
+          jobDetails: {
+            occupation: "ITコンサルタント",
+            position: "シニアコンサルタント",
+          },
+          requirements: {
+            must: ["ITコンサルティング経験3年以上", "プロジェクト管理経験"],
+            welcome: ["PMP資格保有者"],
+            potential: [
+              "論理的思考力が高い方",
+              "クライアントファーストで動ける方",
+            ],
+          },
+          attractiveness: {
+            vision: "テクノロジーで日本企業の未来を創る。",
+            business:
+              "DX支援、基幹システム導入、IT戦略立案をワンストップで提供します。",
+            services: [],
+          },
+          agentInfo: {
+            mission: ["即戦力となるシニアクラスを1名採用したい。"],
+            persona: ["30代前半", "同業他社での実績あり"],
+          },
+        },
+      ];
+
+      const mockDashboard = {
+        incomeDistribution: [
+          { range: "700万円以上", count: 2, type: "passed" },
+          { range: "450万円-699万円", count: 4, type: "passed" },
+          { range: "300万円-449万円", count: 10, type: "passed" },
+          { range: "300万円-449万円", count: 1, type: "internal" }, // 内定
+          { range: "300万円未満", count: 3, type: "passed" },
+        ],
+        selectionStats: {
+          docScreeningSpeed: "3日以内",
+          hiresNeeded: "3ヶ月 5〜9名",
+          docPassRate: "50%以上",
+        },
+        passedCandidates: [
+          {
+            profile: "23歳/女性/400万円",
+            exp: "1社/大卒",
+            school: "東京医療保健大学",
+            resume: "看護師: 1年未満",
+            industry: "病院・クリニック",
+            mgmt: "なし",
+            date: "2025年11月5日",
+          },
+          {
+            profile: "24歳/男性/350万円",
+            exp: "1社/大卒",
+            school: "東洋学園大学",
+            resume: "フィールドセールス (個人向け): 1年未満",
+            industry: "精密機器・光学機器メーカー",
+            mgmt: "なし",
+            date: "2025年10月29日",
+          },
+          {
+            profile: "24歳/男性/324万円",
+            exp: "1社/大卒",
+            school: "同志社大学",
+            resume: "プリセールス・セールスエンジニア: 1年未満",
+            industry: "その他サービス (無形)",
+            mgmt: "なし",
+            date: "2025年10月28日",
+          },
+        ],
+        interviewPassed: [
+          {
+            profile: "24歳/男性/330万円",
+            exp: "1社/大卒",
+            school: "中央大学",
+            resume: "その他機械関連職: 1年未満",
+            industry: "人材派遣",
+            mgmt: "なし",
+            date: "2025年10月21日",
+          },
+        ],
+      };
+
+      // --- SPA ルーター & レンダリング ---
+      const appContent = document.getElementById("app-content");
+      const navLinks = document.querySelectorAll(".nav-link");
+
+      // ナビゲーションリンクのアクティブ状態を更新
+      function updateNavLinks(hash) {
+        navLinks.forEach((link) => {
+          if (link.getAttribute("href") === hash) {
+            link.classList.add("border-blue-500", "text-gray-900");
+            link.classList.remove(
+              "border-transparent",
+              "text-gray-500",
+              "hover:border-gray-300",
+              "hover:text-gray-700"
+            );
+          } else {
+            link.classList.add(
+              "border-transparent",
+              "text-gray-500",
+              "hover:border-gray-300",
+              "hover:text-gray-700"
+            );
+            link.classList.remove("border-blue-500", "text-gray-900");
+          }
+        });
+      }
+
+      // ページを描画
+      function renderPage() {
+        let hash = window.location.hash || "#search";
+
+        // ナビゲーションのアクティブ状態を更新
+        let baseHash = hash.startsWith("#job/") ? "#search" : hash;
+        updateNavLinks(baseHash);
+
+        appContent.innerHTML = ""; // 既存のコンテンツをクリア
+
+        if (hash.startsWith("#job/")) {
+          const jobId = parseInt(hash.split("/")[1], 10);
+          const job = mockJobs.find((j) => j.id === jobId);
+          if (job) {
+            appContent.innerHTML = renderJobDetailPage(job);
+            // タブのイベントリスナーを登録
+            setupTabs();
+          } else {
+            appContent.innerHTML = renderNotFoundPage();
+          }
+        } else if (hash === "#search") {
+          appContent.innerHTML = renderSearchPage();
+        } else if (hash === "#dashboard") {
+          appContent.innerHTML = renderDashboardPage();
+        } else if (hash === "#fees") {
+          appContent.innerHTML = renderFeesPage();
+        } else {
+          appContent.innerHTML = renderNotFoundPage();
+        }
+        window.scrollTo(0, 0); // ページトップにスクロール
+      }
+
+      // --- ページテンプレート ---
+
+      // 1. 検索ページ
+      function renderSearchPage() {
+        return `
+                <div class="space-y-8">
+                    <!-- 検索フォーム -->
+                    ${renderSearchForm()}
+                    
+                    <!-- 求人一覧 -->
+                    <div class="bg-white shadow rounded-lg p-6">
+                        <h2 class="text-xl font-semibold mb-4">求人一覧 ( ${
+                          mockJobs.length
+                        } 件)</h2>
+                        <div class="space-y-6">
+                            ${mockJobs
+                              .map((job) => renderJobCard(job))
+                              .join("")}
+                        </div>
+                    </div>
+                </div>
+            `;
+      }
+
+      // 検索フォームコンポーネント
+      function renderSearchForm() {
+        return `
+                <div class="bg-white shadow rounded-lg p-6">
+                    <h2 class="text-lg font-semibold mb-4">石川楓 (14件)</h2>
+                    
+                    <!-- 絞り込み -->
+                    <div class="flex space-x-4 mb-6 pb-6 border-b">
+                        <label class="flex items-center"><input type="checkbox" class="rounded mr-2">求人分類</label>
+                        <label class="flex items-center"><input type="checkbox" class="rounded mr-2">自社登録求人</label>
+                        <label class="flex items-center"><input type="checkbox" class="rounded mr-2">事務局サポート求人</label>
+                        <label class="flex items-center"><input type="checkbox" class="rounded mr-2" checked>企業求人</label>
+                        <label class="flex items-center"><input type="checkbox" class="rounded mr-2">シェアリング求人</label>
+                    </div>
+
+                    <!-- キーワード検索 -->
+                    <div class="space-y-4 mb-6">
+                        ${renderKeywordInput(
+                          "求人企業名",
+                          "のいずれかを含む (OR)"
+                        )}
+                        ${renderKeywordInput(
+                          "求人企業名",
+                          "をすべて含む (AND)"
+                        )}
+                        ${renderKeywordInput(
+                          "求人企業名",
+                          "のいずれかを含まない (NOT/OR)"
+                        )}
+                        ${renderKeywordInput(
+                          "求人企業名",
+                          "をすべてを含まない (NOT/AND)"
+                        )}
+                    </div>
+
+                    <!-- 職種・勤務地 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">職種</label>
+                            <button class="w-full text-left bg-gray-50 border border-gray-300 rounded-md p-2 flex items-center justify-between text-gray-500">
+                                <span>＋ 指定する</span>
+                                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                            </button>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">勤務地</label>
+                            <button class="w-full text-left bg-gray-50 border border-gray-300 rounded-md p-2 flex items-center justify-between text-gray-500">
+                                <span>＋ 指定する</span>
+                                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 年収 -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">年収</label>
+                        <div class="flex items-center space-x-2">
+                            <input type="text" class="w-24 border border-gray-300 rounded-md shadow-sm p-2 text-right" placeholder="下限">
+                            <span class="text-gray-700">万円</span>
+                            <span class="text-gray-500">を含む</span>
+                            <input type="text" class="w-24 border border-gray-300 rounded-md shadow-sm p-2 text-right" placeholder="下限年収">
+                            <span class="text-gray-700">万円</span>
+                            <span class="text-gray-500">以上〜</span>
+                            <input type="text" class="w-24 border border-gray-300 rounded-md shadow-sm p-2 text-right" placeholder="上限年収">
+                            <span class="text-gray-700">万円</span>
+                            <span class="text-gray-500">以内</span>
+                        </div>
+                    </div>
+
+                    <!-- 検索ボタン -->
+                    <div class="flex justify-between items-center pt-6 border-t">
+                        <button class="text-sm text-blue-600 hover:underline">＋ さらに詳しい条件で検索する</button>
+                        <div class="flex space-x-4">
+                            <button class="py-2 px-4 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                保存条件を呼び出す
+                            </button>
+                            <button class="py-2 px-8 bg-orange-500 text-white rounded-md text-lg font-semibold hover:bg-orange-600">
+                                条件に合う求人 14 件を検索
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+      }
+
+      // キーワード入力コンポーネント
+      function renderKeywordInput(defaultOption, defaultCondition) {
+        return `
+                <div class="flex items-center space-x-2">
+                    <select class="w-40 border border-gray-300 rounded-md shadow-sm p-2">
+                        <option>${defaultOption}</option>
+                        <option>求人名</option>
+                    </select>
+                    <div class="relative flex-grow">
+                        <input type="text" class="w-full border border-gray-300 rounded-md shadow-sm p-2 pl-10" placeholder="キーワード (30文字以内)">
+                        <svg class="h-5 w-5 text-gray-400 absolute left-3 top-2.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                    </div>
+                    <select class="w-60 border border-gray-300 rounded-md shadow-sm p-2">
+                        <option>${defaultCondition}</option>
+                        <option>をすべて含む (AND)</option>
+                        <option>のいずれかを含まない (NOT/OR)</option>
+                        <option>をすべてを含まない (NOT/AND)</option>
+                    </select>
+                </div>
+            `;
+      }
+
+      // 求人カードコンポーネント
+      function renderJobCard(job) {
+        return `
+                <div class="border rounded-lg p-4 flex space-x-4 transition duration-200 job-card">
+                    <img src="${job.image}" alt="${
+          job.company
+        }" class="w-40 h-32 object-cover rounded-md flex-shrink-0">
+                    <div class="flex-grow">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-xs font-semibold text-blue-700 bg-blue-100 px-2 py-0.5 rounded">${
+                                  job.type
+                                }</span>
+                                <span class="text-xs font-semibold text-gray-700 bg-gray-100 px-2 py-0.5 rounded ml-1">${
+                                  job.status
+                                }</span>
+                            </div>
+                            <span class="text-xs text-gray-500">掲載開始日: 2025/09/12</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-blue-600 hover:underline mt-1">
+                            <a href="#job/${job.id}">${job.title}</a>
+                        </h3>
+                        <p class="text-sm font-medium text-gray-800 mt-1">${
+                          job.company
+                        }</p>
+                        <div class="text-sm text-gray-600 mt-2 space-y-1">
+                            <p><strong>年収:</strong> ${job.salary}</p>
+                            <p><strong>勤務地:</strong> ${job.location}</p>
+                        </div>
+                        <div class="mt-2 flex flex-wrap gap-1">
+                            ${job.tags
+                              .map(
+                                (tag) =>
+                                  `<span class="text-xs text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">${tag}</span>`
+                              )
+                              .join("")}
+                        </div>
+                    </div>
+                </div>
+            `;
+      }
+
+      // 2. 求人詳細ページ
+      function renderJobDetailPage(job) {
+        return `
+                <div class="bg-white shadow rounded-lg overflow-hidden">
+                    <!-- ヘッダー -->
+                    <div class="p-6 md:p-8">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-sm font-semibold text-blue-700 bg-blue-100 px-3 py-1 rounded-full">${
+                                  job.type
+                                }</span>
+                                <span class="text-sm font-semibold text-gray-700 bg-gray-100 px-3 py-1 rounded-full ml-2">${
+                                  job.status
+                                }</span>
+                            </div>
+                            <span class="text-red-600 bg-red-100 text-sm font-bold px-3 py-1 rounded-md">理論年収×30%</span>
+                        </div>
+                        <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mt-4">${
+                          job.title
+                        }</h1>
+                        <p class="text-lg font-medium text-blue-600 mt-2">${
+                          job.company
+                        }</p>
+                    </div>
+
+                    <!-- メイン画像 & 基本情報 -->
+                    <div class="p-6 md:p-8 md:flex md:space-x-8 border-t">
+                        <div class="md:w-3/5">
+                            <img src="${job.image.replace(
+                              "600x400",
+                              "800x500"
+                            )}" alt="${
+          job.company
+        }" class="w-full object-cover rounded-lg shadow-md">
+                            <div class="grid grid-cols-4 gap-2 mt-4">
+                                ${job.companyImages
+                                  .map(
+                                    (img) =>
+                                      `<img src="${img}" class="w-full h-24 object-cover rounded-md">`
+                                  )
+                                  .join("")}
+                            </div>
+                        </div>
+                        <div class="md:w-2/5 mt-6 md:mt-0">
+                            <!-- 基本情報 -->
+                            <div class="space-y-3 text-sm">
+                                ${renderInfoItem(
+                                  "職種",
+                                  job.jobDetails.occupation
+                                )}
+                                ${renderInfoItem(
+                                  "職位",
+                                  job.jobDetails.position
+                                )}
+                                ${renderInfoItem("年収", job.salary)}
+                                ${renderInfoItem("勤務地", job.location)}
+                            </div>
+                            <!-- 企業情報 -->
+                            <h3 class="text-lg font-semibold text-gray-800 mt-8 mb-4">企業情報</h3>
+                            <div class="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
+                                ${renderInfoItem(
+                                  "設立年",
+                                  job.companyInfo.established
+                                )}
+                                ${renderInfoItem(
+                                  "上場区分",
+                                  job.companyInfo.listed
+                                )}
+                                ${renderInfoItem(
+                                  "企業フェーズ",
+                                  job.companyInfo.phase
+                                )}
+                                ${renderInfoItem(
+                                  "平均年齢",
+                                  job.companyInfo.avgAge
+                                )}
+                                ${renderInfoItem(
+                                  "従業員数",
+                                  job.companyInfo.employees
+                                )}
+                                ${renderInfoItem(
+                                  "男女比",
+                                  job.companyInfo.genderRatio
+                                )}
+                            </div>
+                            <div class="mt-3 text-sm">
+                                ${renderInfoItem(
+                                  "住所",
+                                  job.companyInfo.address
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- アクションボタン -->
+                    <div class="p-6 bg-gray-50 border-t border-b flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+                        <div class="flex space-x-3">
+                            <button class="py-2 px-5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 flex items-center">
+                                <svg class="h-5 w-5 mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.79 4 4s-1.79 4-4 4c-1.742 0-3.223-.835-3.772-2M12 12V3m0 9v9m0-9H3m9 0h9" /></svg>
+                                求人票を出力する
+                            </button>
+                            <button class="py-2 px-5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 flex items-center">
+                                <svg class="h-5 w-5 mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l-1.316.668m1.316-.668l-1.316-.668m0 0l-1.023-.513a3 3 0 00-3.32 0l-1.023.513m5.343 0l1.023.513a3 3 0 010 5.343l-1.023.513m-5.343 0l-1.023-.513a3 3 0 010-5.343l1.023-.513" /></svg>
+                                質問する
+                            </button>
+                            <button class="py-2 px-5 border border-orange-400 rounded-md text-sm font-medium text-orange-600 hover:bg-orange-50 flex items-center">
+                                <svg class="h-5 w-5 mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                                はずす
+                            </button>
+                        </div>
+                        <button class="w-full sm:w-auto py-3 px-10 bg-blue-600 text-white rounded-md text-base font-semibold hover:bg-blue-700">
+                            求職者を選択する
+                        </button>
+                    </div>
+
+                    <!-- タブナビゲーション -->
+                    <div class="border-b border-gray-200">
+                        <nav class="flex space-x-4 px-6 md:px-8 -mb-px" id="job-tabs">
+                            <button class="tab-btn active" data-tab="tab-details">求人要件</button>
+                            <button class="tab-btn" data-tab="tab-attractiveness">この求人の魅力</button>
+                            <button class="tab-btn" data-tab="tab-agent-info">エージェント向け情報</button>
+                        </nav>
+                    </div>
+
+                    <!-- タブコンテンツ -->
+                    <div class="p-6 md:p-8">
+                        <!-- 求人要件タブ -->
+                        <div id="tab-details" class="tab-content space-y-8">
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b">応募必須条件</h3>
+                                <div class="prose prose-sm max-w-none text-gray-700">
+                                    <ul class="list-disc pl-5 space-y-1">
+                                        ${job.requirements.must
+                                          .map((item) => `<li>${item}</li>`)
+                                          .join("")}
+                                        ${job.requirements.welcome
+                                          .map((item) => `<li>${item}</li>`)
+                                          .join("")}
+                                    </ul>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b">内定の可能性が高い人</h3>
+                                <div class="prose prose-sm max-w-none text-gray-700">
+                                    <ul class="list-disc pl-5 space-y-1">
+                                        ${job.requirements.potential
+                                          .map((item) => `<li>${item}</li>`)
+                                          .join("")}
+                                    </ul>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b">書類見送りの主な理由</h3>
+                                <div class="prose prose-sm max-w-none text-gray-700">
+                                    <ul class="list-disc pl-5 space-y-1">
+                                        <li>【推薦NG条件】</li>
+                                        <li>外国籍</li>
+                                        <li>既往歴あり(完治含む)</li>
+                                        <li>35歳以上</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- この求人の魅力タブ -->
+                        <div id="tab-attractiveness" class="tab-content space-y-8 hidden">
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b"><span class="text-blue-600">理念・ビジョン</span></h3>
+                                <p class="text-gray-700 leading-relaxed">${
+                                  job.attractiveness.vision
+                                }</p>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b"><span class="text-blue-600">事業内容</span></h3>
+                                <p class="text-gray-700 leading-relaxed">${
+                                  job.attractiveness.business
+                                }</p>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b"><span class="text-blue-600">【サービス内容】</span></h3>
+                                <div class="space-y-4">
+                                    ${job.attractiveness.services
+                                      .map(
+                                        (s) => `
+                                        <div>
+                                            <h4 class="font-semibold text-gray-700">■ ${s.title}</h4>
+                                            <p class="text-gray-600 text-sm ml-4">${s.content}</p>
+                                        </div>
+                                    `
+                                      )
+                                      .join("")}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- エージェント向け情報タブ -->
+                        <div id="tab-agent-info" class="tab-content space-y-8 hidden">
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b">人事担当からの伝達事項</h3>
+                                <div class="prose prose-sm max-w-none text-gray-700">
+                                    <ul class="list-disc pl-5 space-y-1">
+                                        ${job.agentInfo.mission
+                                          .map((item) => `<li>${item}</li>`)
+                                          .join("")}
+                                    </ul>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b">理想の人物像・ペルソナ</h3>
+                                <div class="prose prose-sm max-w-none text-gray-700">
+                                    <ul class="list-disc pl-5 space-y-1">
+                                        ${job.agentInfo.persona
+                                          .map((item) => `<li>${item}</li>`)
+                                          .join("")}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+      }
+
+      // 詳細情報アイテムコンポーネント
+      function renderInfoItem(label, value) {
+        return `
+                <div class="flex">
+                    <dt class="w-24 font-medium text-gray-500 flex-shrink-0">${label}</dt>
+                    <dd class="text-gray-800 font-medium">${value}</dd>
+                </div>
+            `;
+      }
+
+      // 3. ダッシュボードページ
+      function renderDashboardPage() {
+        const stats = mockDashboard.selectionStats;
+
+        // グラフデータを処理
+        const ranges = [
+          "700万円以上",
+          "450万円-699万円",
+          "300万円-449万円",
+          "300万円未満",
+        ];
+
+        const groupedData = ranges.map((range) => {
+          const passedData = mockDashboard.incomeDistribution.find(
+            (d) => d.range === range && d.type === "passed"
+          );
+          const internalData = mockDashboard.incomeDistribution.find(
+            (d) => d.range === range && d.type === "internal"
+          );
+          return {
+            range: range,
+            passed: passedData ? passedData.count : 0,
+            internal: internalData ? internalData.count : 0,
+          };
+        });
+
+        // passed + internal の合計が最大となる値をグラフの100%幅の基準とする
+        const maxCount = Math.max(
+          ...groupedData.map((d) => d.passed + d.internal)
+        );
+
+        return `
+                <div class="space-y-8">
+                    <!-- 選考通過応募者情報 -->
+                    <div class="bg-white shadow rounded-lg p-6">
+                        <h2 class="text-xl font-semibold mb-4">選考通過した応募者情報 (直近3ヶ月)</h2>
+                        
+                        <!-- 凡例 -->
+                        <div class="flex justify-end space-x-4 mb-2 text-sm">
+                            <div class="flex items-center">
+                                <span class="w-3 h-3 bg-blue-500 rounded-full mr-1.5"></span>
+                                <span>書類通過</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="w-3 h-3 bg-pink-500 rounded-full mr-1.5"></span>
+                                <span>内定</span>
+                            </div>
+                        </div>
+
+                        <!-- グラフ -->
+                        <div class="mb-8 space-y-4 pt-4">
+                            ${groupedData
+                              .map((data) => {
+                                // 0除算を避ける
+                                const passedWidth =
+                                  maxCount > 0
+                                    ? (data.passed / maxCount) * 100
+                                    : 0;
+                                const internalWidth =
+                                  maxCount > 0
+                                    ? (data.internal / maxCount) * 100
+                                    : 0;
+
+                                return `
+                                    <div class="flex items-center">
+                                        <div class="w-32 text-sm text-gray-600 text-right pr-4 flex-shrink-0">${
+                                          data.range
+                                        }</div>
+                                        <div class="flex-grow h-6 bg-gray-200 rounded-full overflow-hidden flex">
+                                            <div class="bg-blue-500" style="width: ${passedWidth}%"></div>
+                                            <div class="bg-pink-500" style="width: ${internalWidth}%"></div>
+                                        </div>
+                                        <div class="w-24 text-sm text-gray-800 font-medium pl-3 flex-shrink-0">
+                                            ${
+                                              data.passed > 0
+                                                ? `${data.passed}人`
+                                                : ""
+                                            }
+                                            ${
+                                              data.internal > 0
+                                                ? `<span class="text-pink-600 font-medium ml-1">(+${data.internal}人)</span>`
+                                                : ""
+                                            }
+                                        </div>
+                                    </div>
+                                `;
+                              })
+                              .join("")}
+                        </div>
+
+                        <!-- 統計サマリー -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 text-center">
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="text-sm text-gray-500">書類選考スピード</div>
+                                <div class="text-2xl font-bold text-blue-600">${
+                                  stats.docScreeningSpeed
+                                }</div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="text-sm text-gray-500">採用予定人数</div>
+                                <div class="text-2xl font-bold text-blue-600">${
+                                  stats.hiresNeeded
+                                }</div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="text-sm text-gray-500">書類選考通過率</div>
+                                <div class="text-2xl font-bold text-blue-600">${
+                                  stats.docPassRate
+                                }</div>
+                            </div>
+                        </div>
+
+                        <!-- 候補者リスト -->
+                        ${renderCandidateTable(
+                          "書類選考通過",
+                          mockDashboard.passedCandidates
+                        )}
+                        ${renderCandidateTable(
+                          "一次面接通過",
+                          mockDashboard.interviewPassed
+                        )}
+                    </div>
+                </div>
+            `;
+      }
+
+      // 候補者テーブルコンポーネント
+      function renderCandidateTable(title, candidates) {
+        if (candidates.length === 0)
+          return `
+                <div class="mt-8">
+                    <h3 class="text-lg font-semibold mb-3 pb-2 border-b">${title}</h3>
+                    <p class="text-gray-500 text-sm">選考データがありません</p>
+                </div>
+            `;
+
+        return `
+                <div class="mt-8">
+                    <h3 class="text-lg font-semibold mb-3 pb-2 border-b">${title}</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">プロフィール</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">卒業学校名</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">経験職種</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">経験業種</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">マネジメント経験</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">通過日</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                ${candidates
+                                  .map(
+                                    (c) => `
+                                    <tr>
+                                        <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">${c.profile}</td>
+                                        <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">${c.school}</td>
+                                        <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">${c.resume}</td>
+                                        <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">${c.industry}</td>
+                                        <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">${c.mgmt}</td>
+                                        <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">${c.date}</td>
+                                    </tr>
+                                `
+                                  )
+                                  .join("")}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+      }
+
+      // 4. 手数料ページ
+      function renderFeesPage() {
+        return `
+                <div class="bg-white shadow rounded-lg p-6 md:p-8 max-w-4xl mx-auto">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6 pb-4 border-b">
+                        <svg class="h-6 w-6 inline-block mr-2 -mt-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0c-1.657 0-3-.895-3-2s1.343-2 3-2 3-.895 3-2-1.343-2-3-2m0 8c1.11 0 2.08-.402 2.599-1M12 16v1" /></svg>
+                        成約手数料
+                    </h2>
+                    
+                    <div class="space-y-6">
+                        ${renderFeeItem(
+                          "成果報酬金額",
+                          '<span class="text-red-600 font-bold">理論年収 × 30%</span>'
+                        )}
+                        ${renderFeeItem("成果地点", "入社")}
+                        ${renderFeeItem(
+                          "支払いサイト",
+                          "被採用者の入社日が属する月の翌月末支払い<br><span class='text-xs text-gray-500'>※銀行営業日ではない場合は、前日までの入金となります。</span>"
+                        )}
+                        
+                        <div>
+                            <dt class_="block text-sm font-medium text-gray-500 mb-1">返戻金の規定</dt>
+                            <dd class="text-gray-900 text-sm p-4 bg-gray-50 rounded-md border border-gray-200">
+                                被採用者の自己都合により退職に至った場合、以下の通り返金するものとします。<br>
+                                <ul class="list-disc pl-5 mt-2 space-y-1">
+                                    <li>入社後1ヶ月未満で退職した場合: 人材紹介手数料の80%</li>
+                                    <li>入社後3ヶ月未満で退職した場合: 人材紹介手数料の50%</li>
+                                    <li>入社後6ヶ月未満で退職した場合: 人材紹介手数料の20%</li>
+                                </ul>
+                            </dd>
+                        </div>
+
+                        <div>
+                            <dt class_="block text-sm font-medium text-gray-500 mb-1">理論年収の考え方</dt>
+                            <dd class="text-gray-900 text-sm p-4 bg-gray-50 rounded-md border border-gray-200">
+                                <ul class="list-disc pl-5 space-y-2">
+                                    <li>理論年収 = 「月額固定給×12ヶ月 + 賞与算定基準額・前年度実績賞与支給月数」となります。</li>
+                                    <li>月額固定給 = 「基本給 + 家族手当・住宅手当・役職手当などその他諸手当」で算出致します。
+                                        <br><span class="text-xs text-gray-500">但し、通勤手当や超過勤務手当(残業手当)等変動する手当は含まれません。</span>
+                                    </li>
+                                    <li>年俸制の場合は、年俸額を年収(=理論年収)としております。</li>
+                                </ul>
+                            </dd>
+                        </div>
+                    </div>
+                </div>
+            `;
+      }
+
+      // 手数料アイテムコンポーネント
+      function renderFeeItem(label, value) {
+        return `
+                <div class="border-b pb-4">
+                    <dt class="block text-sm font-medium text-gray-500">${label}</dt>
+                    <dd class="text-gray-900 text-lg font-medium mt-1">${value}</dd>
+                </div>
+            `;
+      }
+
+      // 404 ページ
+      function renderNotFoundPage() {
+        return `
+                <div class="text-center py-20">
+                    <h1 class="text-6xl font-bold text-gray-300">404</h1>
+                    <p class="text-xl font-medium text-gray-700 mt-4">ページが見つかりません</p>
+                    <a href="#search" class="mt-8 inline-block py-3 px-6 bg-blue-600 text-white rounded-md text-base font-semibold hover:bg-blue-700">
+                        検索ページに戻る
+                    </a>
+                </div>
+            `;
+      }
+
+      // --- タブ切り替えロジック ---
+      function setupTabs() {
+        const tabsContainer = document.getElementById("job-tabs");
+        if (!tabsContainer) return;
+
+        const tabButtons = tabsContainer.querySelectorAll(".tab-btn");
+        const tabContents = document.querySelectorAll(".tab-content");
+
+        tabButtons.forEach((button) => {
+          button.addEventListener("click", () => {
+            const tabId = button.getAttribute("data-tab");
+
+            // ボタンのアクティブ状態を切り替え
+            tabButtons.forEach((btn) => btn.classList.remove("active"));
+            button.classList.add("active");
+
+            // コンテンツの表示を切り替え
+            tabContents.forEach((content) => {
+              if (content.id === tabId) {
+                content.classList.remove("hidden");
+              } else {
+                content.classList.add("hidden");
+              }
+            });
+          });
+        });
+      }
+
+      // --- 初期化 ---
+      window.addEventListener("hashchange", renderPage);
+      window.addEventListener("DOMContentLoaded", renderPage);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,200 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Agent {
+  id            String          @id @default(cuid())
+  email         String          @unique
+  passwordHash  String?         // bcryptでハッシュ化されたパスワード（開発用）
+  name          String
+  organization  String
+  role          Role            @default(AGENT)
+  phone         String?
+  candidates    Candidate[]
+  projects      Project[]       @relation("ProjectOwner")
+  notes         CandidateNote[]
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+}
+
+model Company {
+  id           String   @id @default(cuid())
+  name         String
+  website      String?
+  headcount    Int?
+  industry     String?
+  jobs         Job[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Candidate {
+  id               String        @id @default(cuid())
+  firstName        String
+  lastName         String
+  kana             String?
+  email            String        @unique
+  phone            String?
+  location         String?
+  status           CandidateStatus
+  experienceYears  Int?
+  currentCompany   String?
+  currentTitle     String?
+  desiredRoles     String[]
+  desiredSalaryJPY Int?
+  noticePeriodDays Int?          @default(30)
+  ownerId          String
+  owner            Agent         @relation(fields: [ownerId], references: [id])
+  applications     Application[]
+  projects         CandidateOnProject[]
+  notes            CandidateNote[]
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+}
+
+model CandidateNote {
+  id          String    @id @default(cuid())
+  candidateId String
+  candidate   Candidate @relation(fields: [candidateId], references: [id])
+  authorId    String
+  author      Agent     @relation(fields: [authorId], references: [id])
+  body        String
+  createdAt   DateTime  @default(now())
+}
+
+model Job {
+  id               String         @id @default(cuid())
+  companyId        String
+  company          Company        @relation(fields: [companyId], references: [id])
+  title            String
+  summary          String
+  description      String
+  location         String
+  compensationMin  Int?
+  compensationMax  Int?
+  employmentType   EmploymentType @default(FULL_TIME)
+  status           JobStatus      @default(OPEN)
+  remoteFriendly   Boolean        @default(true)
+  urgent           Boolean        @default(false)
+  tags             JobTag[]
+  applications     Application[]
+  projects         ProjectJob[]
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+}
+
+model JobTag {
+  id     String @id @default(cuid())
+  name   String @unique
+  jobs   Job[]
+}
+
+model Application {
+  id           String           @id @default(cuid())
+  candidateId  String
+  jobId        String
+  stage        ApplicationStage
+  status       PipelineStatus   @default(ACTIVE)
+  probability  Float            @default(0.2)
+  notes        String?
+  candidate    Candidate        @relation(fields: [candidateId], references: [id])
+  job          Job              @relation(fields: [jobId], references: [id])
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+}
+
+model Project {
+  id          String               @id @default(cuid())
+  name        String
+  description String?
+  ownerId     String
+  owner       Agent                @relation("ProjectOwner", fields: [ownerId], references: [id])
+  candidates  CandidateOnProject[]
+  jobs        ProjectJob[]
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+}
+
+model CandidateOnProject {
+  projectId   String
+  candidateId String
+  assignedAt  DateTime  @default(now())
+  project     Project   @relation(fields: [projectId], references: [id])
+  candidate   Candidate @relation(fields: [candidateId], references: [id])
+
+  @@id([projectId, candidateId])
+}
+
+model ProjectJob {
+  projectId String
+  jobId     String
+  project   Project @relation(fields: [projectId], references: [id])
+  job       Job     @relation(fields: [jobId], references: [id])
+
+  @@id([projectId, jobId])
+}
+
+model Announcement {
+  id          String   @id @default(cuid())
+  title       String
+  body        String
+  severity    AnnouncementSeverity @default(INFO)
+  publishedAt DateTime             @default(now())
+  createdAt   DateTime             @default(now())
+}
+
+enum Role {
+  AGENT
+  COMPANY
+  ADMIN
+}
+
+enum CandidateStatus {
+  NEW
+  SCREENING
+  SUBMITTED
+  INTERVIEW
+  OFFER
+  PLACED
+  ARCHIVED
+}
+
+enum ApplicationStage {
+  SCREENING
+  DOCUMENT
+  FIRST_INTERVIEW
+  SECOND_INTERVIEW
+  OFFER
+  HIRED
+  REJECTED
+}
+
+enum PipelineStatus {
+  ACTIVE
+  BLOCKED
+  SUCCESS
+  LOST
+}
+
+enum JobStatus {
+  OPEN
+  PAUSED
+  CLOSED
+}
+
+enum EmploymentType {
+  FULL_TIME
+  CONTRACT
+  TEMPORARY
+  INTERNSHIP
+}
+
+enum AnnouncementSeverity {
+  INFO
+  WARNING
+}
