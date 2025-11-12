@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="light" style="">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gmail POP3終了対応 IMAP設定変更手順書</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+    />
+    <style>
+      body {
+        max-width: 880px;
+        margin: 0 auto;
+        padding: 32px 80px;
+        position: relative;
+        box-sizing: border-box;
+        font-family: "Times New Roman", Times, serif;
+        line-height: 1.6;
+        color: #333;
+      }
+
+      h1 {
+        text-align: center;
+        color: #d32f2f;
+        border-bottom: 3px solid #d32f2f;
+        padding-bottom: 16px;
+        margin-bottom: 32px;
+        font-size: 2.2em;
+      }
+
+      h2 {
+        color: #1976d2;
+        border-left: 4px solid #1976d2;
+        padding-left: 16px;
+        margin-top: 32px;
+        margin-bottom: 16px;
+        font-size: 1.5em;
+      }
+
+      h3 {
+        color: #388e3c;
+        margin-top: 24px;
+        margin-bottom: 12px;
+        font-size: 1.2em;
+      }
+
+      .alert-box {
+        background-color: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-left: 4px solid #f39c12;
+        padding: 16px;
+        margin: 16px 0;
+        border-radius: 4px;
+      }
+
+      .important-box {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        border-left: 4px solid #dc3545;
+        padding: 16px;
+        margin: 16px 0;
+        border-radius: 4px;
+      }
+
+      .success-box {
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        border-left: 4px solid #28a745;
+        padding: 16px;
+        margin: 16px 0;
+        border-radius: 4px;
+      }
+
+      .checklist {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        padding: 16px;
+        margin: 16px 0;
+        border-radius: 4px;
+      }
+
+      .step-box {
+        background-color: #e3f2fd;
+        border: 1px solid #bbdefb;
+        border-left: 4px solid #2196f3;
+        padding: 16px;
+        margin: 16px 0;
+        border-radius: 4px;
+      }
+
+      .checkbox-item {
+        margin: 8px 0;
+        display: flex;
+        align-items: flex-start;
+      }
+
+      .checkbox-item input[type="checkbox"] {
+        margin-right: 8px;
+        margin-top: 4px;
+      }
+
+      .numbered-step {
+        font-weight: bold;
+        color: #1976d2;
+        margin-bottom: 8px;
+      }
+
+      ol.main-steps {
+        counter-reset: step-counter;
+        list-style: none;
+        padding-left: 0;
+      }
+
+      ol.main-steps > li {
+        counter-increment: step-counter;
+        margin-bottom: 16px;
+        padding-left: 32px;
+        position: relative;
+      }
+
+      ol.main-steps > li::before {
+        content: counter(step-counter);
+        position: absolute;
+        left: 0;
+        top: 0;
+        background-color: #1976d2;
+        color: white;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 14px;
+      }
+
+      .highlight {
+        background-color: #ffeb3b;
+        padding: 2px 4px;
+      }
+
+      .bold {
+        font-weight: bold;
+      }
+
+      .faq-item {
+        margin-bottom: 16px;
+        padding: 12px;
+        border-left: 3px solid #9e9e9e;
+        background-color: #fafafa;
+      }
+
+      .faq-question {
+        font-weight: bold;
+        color: #424242;
+        margin-bottom: 8px;
+      }
+
+      .faq-answer {
+        color: #666;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 16px 0;
+      }
+
+      table th,
+      table td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: left;
+      }
+
+      table th {
+        background-color: #f5f5f5;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body style="">
+    <h1>Gmail POP3終了対応 IMAP設定変更手順書</h1>
+
+    <h2>📋 はじめに</h2>
+
+    <div class="important-box">
+      <h3>🚨 重要なお知らせ</h3>
+      <p>
+        <span class="bold"
+          >2026年1月より、GmailでPOP3を使用した他社メールの受信機能が終了します。</span
+        >
+      </p>
+      <p>
+        <span class="highlight">対応期限：2025年12月末まで</span
+        >に設定変更が必要です。
+      </p>
+    </div>
+
+    <h3>📧 対象者の確認</h3>
+    <p>以下に該当する方は設定変更が必要です：</p>
+    <div class="checklist">
+      <div class="checkbox-item">
+        <input type="checkbox" id="check1" disabled="" />
+        <label for="check1"
+          >Gmail画面で他社メール（会社メール等）を受信している</label
+        >
+      </div>
+      <div class="checkbox-item">
+        <input type="checkbox" id="check2" disabled="" />
+        <label for="check2"
+          >「他のアカウントのメールを確認」機能を利用している</label
+        >
+      </div>
+      <div class="checkbox-item">
+        <input type="checkbox" id="check3" disabled="" />
+        <label for="check3"
+          >複数のメールアドレスをGmail上で一元管理している</label
+        >
+      </div>
+    </div>
+
+    <h2>🎯 IMAP移行とは</h2>
+
+    <p>
+      <span class="bold">IMAP（Internet Message Access Protocol）</span
+      >は、POP3に代わる新しいメール受信方式です。
+    </p>
+
+    <h3>📊 POP3とIMAPの違い</h3>
+    <table>
+      <tbody>
+        <tr>
+          <th>項目</th>
+          <th>POP3（従来）</th>
+          <th>IMAP（新方式）</th>
+        </tr>
+        <tr>
+          <td>メール保存場所</td>
+          <td>端末にダウンロード</td>
+          <td>サーバー上で管理</td>
+        </tr>
+        <tr>
+          <td>複数端末での利用</td>
+          <td>困難</td>
+          <td>同期可能</td>
+        </tr>
+        <tr>
+          <td>メールの削除</td>
+          <td>端末から削除される</td>
+          <td>全端末で同期</td>
+        </tr>
+        <tr>
+          <td>セキュリティ</td>
+          <td>基本的</td>
+          <td>高度</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="success-box">
+      <h3>✅ IMAPのメリット</h3>
+      <ul>
+        <li><span class="bold">複数デバイスでメール同期</span>が可能</li>
+        <li>
+          <span class="bold">サーバー上でメール管理</span
+          >（データ消失リスク軽減）
+        </li>
+        <li><span class="bold">リアルタイム更新</span>で最新状態を維持</li>
+        <li><span class="bold">より安全で安定した接続</span></li>
+      </ul>
+    </div>
+
+    <h2>📋 事前準備チェックリスト</h2>
+
+    <div class="step-box">
+      <h3>☐ 1. 現在の設定確認</h3>
+      <p><span class="bold">Gmail側確認手順：</span></p>
+      <ol>
+        <li>Gmailにログイン</li>
+        <li>右上の歯車アイコン⚙️をクリック</li>
+        <li>「すべての設定を表示」を選択</li>
+        <li>「アカウントとインポート」タブを確認</li>
+        <li>「他のアカウントのメールを確認」欄に設定があるかチェック</li>
+      </ol>
+    </div>
+
+    <div class="step-box">
+      <h3>☐ 2. 必要な情報を準備</h3>
+      <ul>
+        <li>Gmailアドレスとパスワード</li>
+        <li>会社メールアドレス（移行対象のメール）</li>
+        <li>現在のメール受信状況の確認</li>
+      </ul>
+    </div>
+
+    <div class="step-box">
+      <h3>☐ 3. データバックアップ（推奨）</h3>
+      <ul>
+        <li>重要なメールをローカルに保存</li>
+        <li>連絡先データのエクスポート</li>
+        <li>メールフィルター設定の記録</li>
+      </ul>
+    </div>
+
+    <h2>🔧 Gmail側でのIMAP設定手順</h2>
+
+    <div class="alert-box">
+      <p>
+        <span class="bold">注意：</span>この手順はGmail
+        Web画面での設定変更のみです。メールソフト（Outlook等）の設定は別途必要になる場合があります。
+      </p>
+    </div>
+
+    <ol class="main-steps">
+      <li>
+        <div class="numbered-step">Gmail設定画面にアクセス</div>
+        <ol>
+          <li>
+            <span class="bold">Gmailにログイン</span>（https://gmail.com）
+          </li>
+          <li><span class="bold">画面右上の歯車アイコン⚙️をクリック</span></li>
+          <li><span class="bold">「すべての設定を表示」をクリック</span></li>
+        </ol>
+        <div class="success-box" style="margin-top: 12px">
+          <p>
+            <span class="bold">確認ポイント：</span
+            >画面上部にタブ（「全般」「ラベル」「受信トレイ」等）が表示されていることを確認
+          </p>
+        </div>
+      </li>
+
+      <li>
+        <div class="numbered-step">IMAP設定の確認・有効化</div>
+        <ol>
+          <li>
+            <span class="bold">「メール転送とPOP/IMAP」タブをクリック</span>
+          </li>
+          <li><span class="bold">「IMAPアクセス」の項目を確認</span></li>
+          <li>
+            <span class="bold">「IMAPを有効にする」を選択</span>
+            <ul>
+              <li>既に「IMAPが有効です」と表示されている場合はそのまま</li>
+              <li>
+                「IMAPを無効にする」が選択されている場合は「IMAPを有効にする」に変更
+              </li>
+            </ul>
+          </li>
+          <li><span class="bold">画面下部の「変更を保存」をクリック</span></li>
+        </ol>
+        <div class="success-box" style="margin-top: 12px">
+          <p>
+            <span class="bold">確認ポイント：</span
+            >「変更内容が保存されました」のメッセージが表示されることを確認
+          </p>
+        </div>
+      </li>
+
+      <li>
+        <div class="numbered-step">
+          2段階認証とアプリパスワードの設定（必要な場合）
+        </div>
+        <div class="alert-box">
+          <p>
+            <span class="bold"
+              >この手順は、外部のメールソフトを使用する場合のみ必要です。Gmail
+              Web画面のみを使用する場合はスキップできます。</span
+            >
+          </p>
+        </div>
+        <ol>
+          <li>
+            <span class="bold">Googleアカウント設定へ移動</span>
+            <ul>
+              <li>新しいタブで https://myaccount.google.com にアクセス</li>
+              <li>
+                または
+                Gmail画面右上のアカウントアイコンから「Googleアカウントを管理」をクリック
+              </li>
+            </ul>
+          </li>
+          <li><span class="bold">「セキュリティ」をクリック</span></li>
+          <li>
+            <span class="bold">「2段階認証プロセス」の状態を確認</span>
+            <ul>
+              <li>無効な場合：設定を有効にする</li>
+              <li>有効な場合：次のステップに進む</li>
+            </ul>
+          </li>
+          <li>
+            <span class="bold">「アプリパスワード」をクリック</span
+            >（2段階認証が有効な場合のみ表示）
+          </li>
+          <li>
+            <span class="bold">「メール」を選択してパスワードを生成</span>
+          </li>
+          <li>
+            <span class="bold">生成されたパスワードをメモ</span
+            >（後でメールソフトの設定で使用）
+          </li>
+        </ol>
+      </li>
+    </ol>
+
+    <h2>✅ 設定完了後の確認</h2>
+
+    <div class="step-box">
+      <h3>☐ IMAP有効化の確認方法</h3>
+      <ol>
+        <li>Gmail設定画面の「メール転送とPOP/IMAP」タブを開く</li>
+        <li>
+          「IMAPアクセス」欄で「IMAPが有効です」と表示されていることを確認
+        </li>
+        <li>「IMAP設定」に詳細設定が表示されていることを確認</li>
+      </ol>
+    </div>
+
+    <div class="step-box">
+      <h3>☐ 動作テスト</h3>
+      <ol>
+        <li>テストメールの送受信を行う</li>
+        <li>複数デバイスでメール同期状況を確認（可能であれば）</li>
+        <li>既存のメールが正常に表示されることを確認</li>
+      </ol>
+    </div>
+
+    <h2>📞 サポート情報</h2>
+
+    <div class="alert-box">
+      <h3>📅 重要な日程</h3>
+      <ul>
+        <li><span class="bold">2025年12月末</span>：設定変更完了期限</li>
+        <li><span class="bold">2026年1月1日</span>：POP3機能サポート終了</li>
+      </ul>
+      <p>
+        <span class="highlight"
+          >計画的な移行作業を行い、メール業務に支障をきたさないよう早めの対応をお願いいたします。</span
+        >
+      </p>
+    </div>
+
+    <hr style="margin-top: 40px; border: none; border-top: 2px solid #ddd" />
+
+    <p
+      style="
+        text-align: center;
+        color: #666;
+        font-size: 0.9em;
+        margin-top: 24px;
+      "
+    >
+      この手順書についてご不明な点がございましたら、お気軽にお問い合わせください。<br />
+      作成日：2025年11月　｜　対応期限：2025年12月末
+    </p>
+  </body>
+</html>
