@@ -9,6 +9,7 @@
 
 - [20251029_chizai_site](https://omksds.github.io/sandbox/20251029_chizai_site/)
 - [20251111_AgentHub](https://omksds.github.io/sandbox/20251111_AgentHub/)
+- [20251112_Gmail-IMAP](https://omksds.github.io/sandbox/20251112_Gmail-IMAP/)
 - [2025620_minutes](https://omksds.github.io/sandbox/2025620_minutes/)
 - [2025621_githubpages](https://omksds.github.io/sandbox/2025621_githubpages/)
 
